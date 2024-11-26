@@ -6,5 +6,6 @@
 #include "fork.h"
 
 int main(){
+  forkTwo();
   return 0;
 }
