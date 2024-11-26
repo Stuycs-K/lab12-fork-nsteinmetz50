@@ -22,13 +22,12 @@ int randomFive(){
   if (bytes == -1){
       err();
   }
-  x = x % 5;
+  x = abs(x) % 5;
   x++;
   return x;
 }
 
 void forkTwo(){
-  int * status;
   printf("%d about to create 2 child processes\n", getpid());
   pid_t p;
   p = fork();
@@ -39,9 +38,24 @@ void forkTwo(){
     int time = randomFive();
     printf("%d %dsec\n", getpid(), time);
     sleep(time);
+    printf("Child %d finished after %d sec\n", getpid(), time);
   }else{
-    WIFEXITED(status);
-    wait(status);
-    printf("Main Process %d is done. Child %d slept for 2sec", getpid(), p);
+    p = fork();
+    if(p<0){
+      perror("fork fail");
+      exit(1);
+    } else if ( p == 0){
+      int time = randomFive();
+      printf("%d %dsec\n", getpid(), time);
+      sleep(time);
+      printf("Child %d finished after %d sec\n", getpid(), time);
+    }
+    else{
+      int status;
+      int child;
+      WIFEXITED(status);
+      child = wait(&status);
+      printf("Main Process %d is done. Child %d slept for __sec\n", getpid(), child);
+    }
   }
 }
