@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <time.h>
 #include "fork.h"
 
 int err(){
@@ -30,6 +31,8 @@ int randomFive(){
 void forkTwo(){
   printf("%d about to create 2 child processes\n", getpid());
   pid_t p;
+  time_t seconds;
+  seconds = time(NULL);
   p = fork();
   if(p<0){
     perror("fork fail");
@@ -55,7 +58,8 @@ void forkTwo(){
       int child;
       WIFEXITED(status);
       child = wait(&status);
-      printf("Main Process %d is done. Child %d slept for __sec\n", getpid(), child);
+      seconds = time(NULL) - seconds;
+      printf("Main Process %d is done. Child %d slept for %ldsec\n", getpid(), child, seconds);
     }
   }
 }
